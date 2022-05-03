@@ -1,1 +1,4 @@
-# terraform-s3-test-vcs
+# Terraform Test Workspaces
+
+Ejemplo de como manejar los workspace con Terraform
+

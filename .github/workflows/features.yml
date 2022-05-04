@@ -27,32 +27,29 @@ jobs:
           terraform init
           terraform fmt -check -diff
           terraform validate
-  
-  terraform-plan:
-    name: Terraform Plan
+  scan-security:
+    name: tfsec sarif report
     runs-on: ubuntu-latest
-    needs: [ fmt-validate ]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v2
 
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@625cb76050397c6b3a1789261eb129f8f39a206b
         with:
           terraform_version: ${{ inputs.version }}
           cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+      - name: Terraform init
+        run: terraform init -input=false -backend=false
       
-      - name: Terraform Init
-        id: init
-        run: terraform init
-
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color
+      - name: Comments On Pull Request
+        uses: tfsec/tfsec-pr-commenter-action@main
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
  
   terraform-test:
     name: Terraform Test
     runs-on: ubuntu-latest
-    needs: [terraform-plan]
+    needs: [fmt-validate, scan-security]
     steps:
       - run: echo "Pruebas unitarias sobre el codigo"

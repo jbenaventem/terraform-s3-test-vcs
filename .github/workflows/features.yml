@@ -42,10 +42,17 @@ jobs:
       - name: Terraform init
         run: terraform init -input=false -backend=false
       
+      - name: tfsec
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          format: sarif
+          soft_fail: false
+          additional_args: --out result.sarif
+
       - name: Comments On Pull Request
         uses: tfsec/tfsec-pr-commenter-action@main
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
  
   terraform-test:
     name: Terraform Test

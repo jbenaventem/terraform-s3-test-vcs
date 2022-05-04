@@ -49,15 +49,10 @@ jobs:
           soft_fail: false
           additional_args: --out result.sarif
 
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
+      - name: Comments On Pull Request
+        uses: tfsec/tfsec-pr-commenter-action@main
         with:
-          sarif_file: result.sarif
-      
-      #- name: Comments On Pull Request
-      #  uses: tfsec/tfsec-pr-commenter-action@main
-      #  with:
-      #    github_token: ${{ github.token }}
+          github_token: ${{ github.token }}
  
   terraform-test:
     name: Terraform Test
